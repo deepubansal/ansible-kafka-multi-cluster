@@ -1,26 +1,22 @@
 download_folder: /opt
 
 confluent_download_url: http://packages.confluent.io/archive/1.0/confluent-1.0-2.10.4.tar.gz
-#confluent_download_url: http://192.168.0.100:8000/confluent-1.0-2.10.4.tar.gz
 confluent_home: "{{ ansible_user_dir }}/broker"
 confluent_archive: "{{download_folder}}/confluent-1.0-2.10.4.tar.gz"
 confluent_install_path: "{{download_folder}}/confluent-1.0"
 server_properties_path: "files/server.properties"
 
 zk_download_url: http://apache.claz.org/zookeeper/zookeeper-3.4.11/zookeeper-3.4.11.tar.gz
-#zk_download_url: http://192.168.0.100:8000/zookeeper-3.4.6.tar.gz
 zk_home: "{{ ansible_user_dir }}/zookeeper"
 zk_archive: "{{download_folder}}/zookeeper-3.4.11.tar.gz"
 zk_install_path: "{{download_folder}}/zookeeper-3.4.11"
 zk_properties_path: "files/zookeeper.properties"
 
 java_download_url: http://download.oracle.com/otn-pub/java/jdk/8u151-b12/e758a0de34e24606bca991d704f6dcbf/jdk-8u151-linux-x64.tar.gz
-#java_download_url: http://192.168.0.100:8000/jdk-8u151-linux-x64.tar.gz
 java_name: "{{download_folder}}/jdk1.8.0_151"
 java_archive: "{{download_folder}}/jdk-8u151-linux-x64.tar.gz"
 
 tomcat_download_url: http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.62/bin/apache-tomcat-7.0.62.tar.gz
-#tomcat_download_url: http://192.168.0.100:8000/apache-tomcat-7.0.63.tar.gz
 tomcat_home_dir: "{{download_folder}}/apache-tomcat-7.0.62"
 tomcat_archive: "{{download_folder}}/apache-tomcat-7.0.62.tar.gz"
 

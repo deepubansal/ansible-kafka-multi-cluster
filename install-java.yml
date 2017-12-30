@@ -46,7 +46,7 @@
       pip: name=httplib2
       become: yes
 
-    # - name: Clean up java archive
-    #   file: state=absent path={{java_archive}}
-    #   tags: java
+    - name: Clean up java archive
+      file: state=absent path={{java_archive}}
+      tags: java
 

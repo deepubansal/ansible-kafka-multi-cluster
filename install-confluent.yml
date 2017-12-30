@@ -67,7 +67,7 @@
 
     - include: tasks/stop-broker-task.yml
     
-    # - name: Clean up conflluent archive
-    #   file: state=absent path={{confluent_archive}}
-    #   become: yes
+    - name: Clean up conflluent archive
+      file: state=absent path={{confluent_archive}}
+      become: yes
 

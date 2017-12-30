@@ -24,6 +24,6 @@
       shell: rm -rf {{ tomcat_home_dir }}/webapps/*
       tags: tomcat
 
-    # - name: Clean up tomcat archive
-    #   file: state=absent path={{tomcat_archive}}
-    #   tags: tomcat
+    - name: Clean up tomcat archive
+      file: state=absent path={{tomcat_archive}}
+      tags: tomcat
