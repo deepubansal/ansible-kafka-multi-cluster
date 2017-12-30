@@ -1,0 +1,6 @@
+---
+
+- include: stop-clusters.yml
+- include: clean-brokers-logs.yml
+- include: clean-zookeeper-logs.yml
+- include: start-clusters.yml

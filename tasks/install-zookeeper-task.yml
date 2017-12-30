@@ -1,0 +1,39 @@
+    - name: Download Zookeeper
+      get_url: url={{zk_download_url}} dest={{zk_archive}}
+      become: yes
+      tags: zookeeper_install
+
+    - name: Unpack Zookeeper archive
+      command: "tar -zxf {{zk_archive}} -C {{ download_folder }} creates={{zk_install_path}}"
+      become: yes
+      tags: zookeeper_install
+
+    - name: Delete zookeeper conf directory
+      file: dest='{{ zk_home }}/conf'  state=absent
+      tags: zookeeper_configure
+
+    - name: Delete zookeeper data directory
+      file: dest='{{ zk_home }}/data'  state=absent
+      tags: zookeeper_configure
+
+    - name: Create zookeeper conf directory
+      file: dest='{{ zk_home }}/conf'  state=directory
+      tags: zookeeper_configure
+
+    - name: Create zookeeper data directory
+      file: dest='{{ zk_home }}/data'  state=directory
+      tags: zookeeper_configure
+
+    - name: Copy zookeeper properties
+      copy: src='{{zk_properties_path}}' dest={{ zk_home }}/conf/zookeeper.properties
+      tags: zookeeper_configure
+
+    - name: Change relative path for data dir in zookeeper properties to absolute path
+      lineinfile: regexp='^dataDir=([^\/])(.*)' line='dataDir={{ zk_home }}/\1\2' dest={{ zk_home }}/conf/zookeeper.properties  backrefs=yes
+      tags: zookeeper_configure
+
+    - name: Change port in zookeeper properties to configured value
+      lineinfile: regexp='^clientPort=(.*)' line='clientPort={{ zk_port | default(2181) }}' dest={{ zk_home }}/conf/zookeeper.properties
+      tags: zookeeper_configure
+
+    - include: restart-zookeeper-task.yml

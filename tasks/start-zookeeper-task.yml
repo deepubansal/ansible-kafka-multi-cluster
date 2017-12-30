@@ -1,0 +1,21 @@
+- name: Get zookeeper PID
+  shell: ps -ef |grep -i zookeeper.properties | grep -v grep | awk '{print $2}'
+  register: zookeeper_pid
+
+- name: fail if zookeeper is already running
+  fail: msg="Zookeeper already running, so failing"
+  when: (zookeeper_pid.stdout != "" and (nofail is undefined or nofail=="false"))
+
+- name: start zookeeper server
+  shell: "export ZOO_LOG_DIR={{zk_home}} && {{zk_install_path}}/bin/zkServer.sh start {{ zk_home }}/conf/zookeeper.properties"
+  
+- name: Pause for 4 seconds
+  pause: seconds=4
+
+- name: Get zookeeper PID
+  shell: ps -ef |grep -i zookeeper.properties | grep -v grep | awk '{print $2}'
+  register: zookeeper_pid
+
+- name: Checking if zookeeper is running
+  fail: msg="Zookeeper could not start, so failing"
+  when: zookeeper_pid.stdout == ""

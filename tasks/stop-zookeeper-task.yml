@@ -1,0 +1,23 @@
+    - name: Get zookeeper PID
+      shell: ps -ef |grep -i zookeeper.properties | grep -v grep | awk '{print $2}'
+      register: zookeeper_pid
+
+    - name: stop zookeeper if already running
+      shell: "{{zk_install_path}}/bin/zkServer.sh stop {{ zk_home }}/conf/zookeeper.properties"
+      when: zookeeper_pid.stdout != ""
+
+    - name: Pause for 5 seconds
+      pause: seconds=5
+      when: zookeeper_pid.stdout != ""      
+
+    - name: Get zookeeper PID
+      shell: ps -ef |grep -i zookeeper.properties | grep -v grep | awk '{print $2}'
+      register: zookeeper_pid
+
+    - name: Kill zookeeper if not able to stop
+      shell: ps -ef |grep -i zookeeper.properties | grep -v grep | awk '{print $2}' | xargs kill -9
+      when: zookeeper_pid.stdout != ""
+
+    - name: Pause for 1 seconds
+      pause: seconds=1
+      when: zookeeper_pid.stdout != ""

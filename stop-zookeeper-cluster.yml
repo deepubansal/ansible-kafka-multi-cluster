@@ -1,0 +1,10 @@
+---
+- name: Stop Zookeeper cluster
+  hosts: zookeepers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+     - include: tasks/stop-zookeeper-task.yml
+

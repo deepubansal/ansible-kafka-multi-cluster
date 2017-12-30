@@ -1,0 +1,8 @@
+---
+
+- include: install-java.yml
+- include: install-tomcat.yml
+- include: install-zk.yml
+- include: start-zookeeper-cluster.yml
+- include: install-confluent.yml
+- include: start-clusters.yml

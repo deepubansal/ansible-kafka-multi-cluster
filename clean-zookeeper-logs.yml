@@ -1,0 +1,15 @@
+---
+- name: Clean Zookeeper Logs
+  hosts: zookeepers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - include: tasks/stop-zookeeper-task.yml nofail="true"
+
+    - name: Clean zookeeper logs directory
+      shell: rm -rf {{ zk_home }}/data/*
+      become: yes
+
+

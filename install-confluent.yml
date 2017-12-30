@@ -1,0 +1,73 @@
+---
+- name: Install Confluent
+  hosts: allbrokers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - name: Download Confluent
+      get_url: url={{confluent_download_url}} dest={{confluent_archive}}
+      become: yes
+      tags: confluent_install
+
+    - name: Unpack Confluent archive
+      command: "tar -zxf {{confluent_archive}} -C {{ download_folder }} creates={{confluent_install_path}}"
+      become: yes
+      tags: confluent_install
+
+    - name: Set up permission on logs folder of Confluent
+      file: "path={{confluent_install_path}}/logs mode=a+rwx state=directory" 
+      become: yes
+      tags: confluent_install
+
+    - name: Delete Broker conf directory
+      file: dest='{{ confluent_home }}/conf'  state=absent
+      tags: broker_configure
+
+    - name: Delete Kafka Logs data directory
+      file: dest='{{ confluent_home }}/logs'  state=absent
+      tags: broker_configure
+
+    - name: Create Broker conf directory
+      file: dest='{{ confluent_home }}/conf'  state=directory
+      tags: broker_configure
+
+    - name: Create Kafka Logs data directory
+      file: dest='{{ confluent_home }}/logs'  state=directory
+      tags: broker_configure
+
+
+    - name: Copy broker properties
+      copy: src='{{server_properties_path}}' dest={{ confluent_home }}/conf/server.properties
+      tags: broker_configure
+
+    - name: Change relative path for data dir in zookeeper properties to absolute path
+      lineinfile: regexp='^log.dirs=([^\/])(.*)' line='log.dirs={{ confluent_home }}/\1\2' dest={{ confluent_home }}/conf/server.properties  backrefs=yes
+      tags: broker_configure
+
+    - name: generate random broker_id
+      set_fact: broker_id={{ 100000 | random }}
+
+    - name: Change broker id of this broker according to inventory
+      lineinfile: regexp='^broker.id=(.*)' line='broker.id={{ broker_id }}' dest={{ confluent_home }}/conf/server.properties  backrefs=yes
+      tags: broker_configure
+
+    - name: Zookeeper connection string of this broker according to inventory
+      lineinfile: regexp='^zookeeper.connect=(.*)' line='zookeeper.connect={{ hostvars[zookeeper]["private_ip"] }}:{{ hostvars[zookeeper]["zk_port"] | default(2181) }}' dest={{ confluent_home }}/conf/server.properties
+      tags: broker_configure
+
+    - name: Zookeeper connection string of this broker according to inventory
+      lineinfile: regexp='^(.*)advertised.host.name=(.*)' line='advertised.host.name={{private_ip}}' dest={{ confluent_home }}/conf/server.properties
+      tags: broker_configure
+
+    - include: tasks/stop-broker-task.yml
+
+    - include: tasks/start-broker-task.yml
+
+    - include: tasks/stop-broker-task.yml
+    
+    # - name: Clean up conflluent archive
+    #   file: state=absent path={{confluent_archive}}
+    #   become: yes
+

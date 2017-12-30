@@ -1,0 +1,52 @@
+---
+- name: Install Java and other dependencies
+  hosts: all
+  become: yes
+  
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - name: Remove openjdk if present
+      yum: pkg=java*openjdk* state=absent
+      tags: java
+
+    - name: Download Java
+      command: "wget -q -O {{java_archive}} --no-check-certificate --no-cookies --header 'Cookie: oraclelicense=accept-securebackup-cookie' {{java_download_url}} creates={{java_archive}}"
+      tags: java
+
+    - name: Unpack Java archive
+      command: "tar -zxf {{java_archive}} -C {{download_folder}} creates={{java_name}}"
+      tags: java
+
+    - name: Fix ownership to Java folder
+      file: state=directory path={{java_name}} owner=root group=root recurse=yes
+      tags: java
+
+    - name: Make Java available for system
+      command: 'alternatives --install "/usr/bin/java" "java" "{{java_name}}/bin/java" 2000'
+      tags: java
+      become: yes
+
+    - name: be sure libselinux-python are installed
+      yum: name=libselinux-python state=present
+      become: yes
+
+    - name: RedHat/CentOS - Update curl
+      yum: name=* state=latest update_cache=yes 
+      when: ansible_os_family == 'RedHat'
+      become: yes
+
+    - name: RedHat/CentOS - Install pip
+      command: bash -c "curl https://bootstrap.pypa.io/get-pip.py | python -"
+      become: yes
+
+    - name: Install httplib2
+      pip: name=httplib2
+      become: yes
+
+    # - name: Clean up java archive
+    #   file: state=absent path={{java_archive}}
+    #   tags: java
+

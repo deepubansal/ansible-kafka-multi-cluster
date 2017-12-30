@@ -1,0 +1,12 @@
+---
+
+- include: stop-zookeeper-cluster.yml
+
+- name: Stop Kafka Brokers
+  hosts: allbrokers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - include: tasks/stop-broker-task.yml nofail="true"

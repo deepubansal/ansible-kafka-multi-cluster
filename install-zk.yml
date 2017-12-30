@@ -1,0 +1,14 @@
+---
+- name: Install Zookeeper
+  hosts: zookeepers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - include: tasks/install-zookeeper-task.yml
+
+    # - name: Clean up zookeeper archive
+    #   file: state=absent path={{zk_archive}}
+    #   become: yes
+    #   tags: zookeeper

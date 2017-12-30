@@ -1,0 +1,16 @@
+---
+- name: Remove topic on clusters
+  hosts: topic-creators
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - name: Remove topic {{topic_name}}
+      command: "{{confluent_install_path}}/bin/kafka-topics --delete --zookeeper {{hostvars[zookeeper]['private_ip']}}:{{ hostvars[zookeeper]['zk_port'] | default(2181) }} --topic {{topic_name}}"
+      register: output
+
+    - name: check output
+      fail: msg= {{output.stdout}}
+      when: output.stdout != "Removed topic \"{{topic_name}}\"."
+

@@ -1,0 +1,24 @@
+- name: Get broker PID
+  shell: ps -ef | grep -i confluent | grep -v grep | awk '{print $2}'
+  register: broker_pid
+
+- name: stop broker
+  shell: "{{confluent_install_path}}/bin/kafka-server-stop {{ confluent_home }}/conf/server.properties"
+  when: broker_pid.stdout != ""
+
+- name: Pause for 5 seconds
+  pause: seconds=5
+  when: broker_pid.stdout != ""  
+
+- name: Get broker PID
+  shell: ps -ef |grep -i confluent | grep -v grep | awk '{print $2}'
+  register: broker_pid
+
+- name: Kill broker if not able to stop
+  shell: ps -ef |grep -i confluent | grep -v grep | awk '{print $2}' | xargs kill -9
+  when: broker_pid.stdout != ""
+
+- name: Pause for 1 seconds
+  pause: seconds=1
+  when: broker_pid.stdout != ""
+

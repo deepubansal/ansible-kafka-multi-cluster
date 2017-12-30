@@ -1,0 +1,12 @@
+---
+
+- include: start-zookeeper-cluster.yml
+
+- name: Start Kafka Brokers
+  hosts: allbrokers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - include: tasks/start-broker-task.yml nofail="true"

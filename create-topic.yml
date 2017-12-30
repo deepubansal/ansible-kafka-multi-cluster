@@ -1,0 +1,16 @@
+---
+- name: Create topic on clusters
+  hosts: topic-creators
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - name: Create topic {{topic_name}}
+      command: "{{confluent_install_path}}/bin/kafka-topics --create --zookeeper {{hostvars[zookeeper]['private_ip']}}:{{ hostvars[zookeeper]['zk_port'] | default(2181) }} --replication-factor {{replication_factor}} --partitions {{partitions}} --topic {{topic_name}}"
+      register: output
+
+    - name: check output
+      fail: msg= {{output.stdout}}
+      when: output.stdout != "Created topic \"{{topic_name}}\"."
+

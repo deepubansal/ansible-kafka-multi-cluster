@@ -1,0 +1,29 @@
+---
+- name: Install Tomcat 7
+  hosts: webapp-servers
+  become: yes
+  
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+    - name: Download Tomcat
+      command: "wget -q -O {{tomcat_archive}} {{tomcat_download_url}} creates={{tomcat_archive}}"
+      tags: tomcat
+
+    - name: Unpack Tomcat archive
+      command: "tar -zxf {{tomcat_archive}} -C {{download_folder}} creates={{tomcat_home_dir}}"
+      tags: tomcat
+
+    - name: Fix ownership to Tomcat folder
+      file: state=directory path={{tomcat_home_dir}} owner=root group=root recurse=yes
+      tags: tomcat
+
+    - name: Clean webapps folder of Tomcat
+      shell: rm -rf {{ tomcat_home_dir }}/webapps/*
+      tags: tomcat
+
+    # - name: Clean up tomcat archive
+    #   file: state=absent path={{tomcat_archive}}
+    #   tags: tomcat

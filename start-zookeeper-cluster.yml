@@ -1,0 +1,10 @@
+---
+- name: Start All Zookeepers
+  hosts: zookeepers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+     - include: tasks/start-zookeeper-task.yml nofail="true"
+

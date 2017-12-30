@@ -1,0 +1,22 @@
+- name: Get broker PID
+  shell: ps -ef | grep -i confluent | grep -v grep | awk '{print $2}'
+  register: broker_pid
+
+- name: fail if broker already running
+  fail: msg="broker already running"
+  when: broker_pid.stdout != "" and (nofail is undefined or nofail=="false")
+
+- name: start confluent server
+  shell: "nohup {{confluent_install_path}}/bin/kafka-server-start {{ confluent_home }}/conf/server.properties & >> {{ confluent_home }}/server-logs"
+  
+- name: Pause for 10 seconds
+  pause: seconds=10
+
+- name: Get broker PID
+  shell: ps -ef |grep -i confluent | grep -v grep | awk '{print $2}'
+  register: broker_pid
+
+- name: Checking if broker is running
+  fail: msg="broker could not start, so failing"
+  when: broker_pid.stdout == ""
+

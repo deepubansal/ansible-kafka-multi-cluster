@@ -1,0 +1,59 @@
+aws1   ansible_host=192.168.10.21 private_ip=192.168.10.21
+aws2   ansible_host=192.168.10.22  private_ip=192.168.10.22 
+aws3   ansible_host=192.168.10.23 private_ip=192.168.10.23
+aws4   ansible_host=192.168.10.24 private_ip=192.168.10.24
+aws5   ansible_host=192.168.10.25 private_ip=192.168.10.25
+aws6   ansible_host=192.168.10.26 private_ip=192.168.10.26
+aws7   ansible_host=192.168.10.27 private_ip=192.168.10.27
+aws8   ansible_host=192.168.10.28 private_ip=192.168.10.28
+
+[all:vars]
+ansible_connection=ssh 
+ansible_ssh_user=vagrant 
+ansible_ssh_pass=vagrant
+ansible_host=127.0.0.1
+
+[zookeepers]
+aws2
+aws4
+aws7
+
+[cluster1]
+aws1
+aws2
+
+[cluster1:vars]
+zookeeper=aws2
+
+
+[cluster2]
+aws3
+aws4
+aws5
+
+[cluster2:vars]
+zookeeper=aws4
+
+
+[cluster3]
+aws6
+aws7
+aws8
+
+[cluster3:vars]
+zookeeper=aws7
+
+[allbrokers:children]
+cluster1
+cluster2
+cluster3
+
+[topic-creators]
+aws1 zookeeper=aws2
+aws4 zookeeper=aws4
+aws8 zookeeper=aws7
+
+[webapp-servers]
+aws1
+aws3
+aws6

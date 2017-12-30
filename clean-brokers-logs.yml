@@ -1,0 +1,20 @@
+
+- name: Clean Kafka Brokers Logs
+  hosts: allbrokers
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+
+     - include: tasks/stop-broker-task.yml
+
+     - name: Clean logs folder
+       shell: "rm -rf {{ confluent_home }}/logs/*"
+       become: yes
+
+     - name: Clean logs folder
+       shell: "rm -rf {{ confluent_home }}/cluster/kafka-logs/*"
+       become: yes
+
+
+
