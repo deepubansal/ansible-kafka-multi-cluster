@@ -17,3 +17,10 @@ The exact configuration looks like:
  Broker'***ij*** defines the broker ***j*** in cluster ***i*** managed by zookeeper zk'***i***.
 
 This script was written 2 years ago so need some updation as per newer version of ansible and centos.
+
+
+## How to execute:
+
+```
+ansible-playbook main-playbook.yml
+```
